@@ -69,7 +69,7 @@
                 position = new WorldWind.Position(20.0, -75.0, 800000.0);
                 var config = {dirPath: '/Nasa_Space_App/3D-model/'};
                 var colladaLoader = new WorldWind.ColladaLoader(position, config);
-				colladaLoader.load("ISS-light.dae", function (colladaModel) {
+				colladaLoader.load("textured.dae", function (colladaModel) {
 				    colladaModel.scale = 140000;
 				    modelLayer.addRenderable(colladaModel);
 				});
