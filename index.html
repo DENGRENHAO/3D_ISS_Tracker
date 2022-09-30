@@ -12,6 +12,7 @@
             #canvas {
                 width: 90vw;
                 height: 90vh;
+                background-color: black;
             }
         </style>
     </head>
@@ -31,6 +32,11 @@
                 // Create a WorldWindow for the canvas.
                 var wwd = new WorldWind.WorldWindow("canvas");
 
+                var starFieldLayer = new WorldWind.StarFieldLayer();
+                var atmosphereLayer = new WorldWind.AtmosphereLayer();
+                var now = new Date();
+                starFieldLayer.time = now;
+                atmosphereLayer.time = now;
                 var layers = [
                     // Imagery layers.
                     {layer: new WorldWind.BMNGLayer(), enabled: true},
@@ -38,9 +44,9 @@
                     {layer: new WorldWind.BingAerialLayer(null), enabled: false},
                     {layer: new WorldWind.BingAerialWithLabelsLayer(null), enabled: false},
                     {layer: new WorldWind.BingRoadsLayer(null), enabled: false},
-                    {layer: new WorldWind.StarFieldLayer(), enabled: false},
+                    {layer: starFieldLayer, enabled: true},
                     // Add atmosphere layer on top of all base layers.
-                    {layer: new WorldWind.AtmosphereLayer(), enabled: true},
+                    {layer: atmosphereLayer, enabled: true},
                     // WorldWindow UI layers.
                     {layer: new WorldWind.CompassLayer(), enabled: true},
                     {layer: new WorldWind.CoordinatesDisplayLayer(wwd), enabled: true},
