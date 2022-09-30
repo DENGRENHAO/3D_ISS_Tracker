@@ -3,7 +3,7 @@
 <html>
     <head lang="en">
         <meta charset="UTF-8">
-        <title>WorldWind Example</title>
+        <title>ISS Tracker</title>
         <!-- Include the Web WorldWind library. -->
         <script src="https://files.worldwind.arc.nasa.gov/artifactory/web/0.9.0/worldwind.min.js"
                 type="text/javascript">
@@ -31,9 +31,12 @@
             </canvas>
         </div>
         <script>
-            // Register an event listener to be called when the page is loaded.
             window.addEventListener("load", eventWindowLoaded, false);
             window.addEventListener("dblclick", focusISS);
+
+            function focusISS() {
+                wwd.goTo(new WorldWind.Location(position.latitude, position.longitude));
+            }
 
             function get_iss_pos(satrec, time) {
                 //  Propagate satellite using JavaScript Date
@@ -57,60 +60,95 @@
                 return [longitude*a, latitude*a, height];
             }
 
-            // Define the event listener to initialize Web WorldWind.
+            // Create a WorldWindow for the canvas.
+            var wwd = new WorldWind.WorldWindow("canvas");
+            var position;
             var modelLayer = new WorldWind.RenderableLayer();
+
+            // Define the event listener to initialize Web WorldWind.
             function eventWindowLoaded() {
-                // Create a WorldWindow for the canvas.
-                var wwd = new WorldWind.WorldWindow("canvas");
+                var starFieldLayer = new WorldWind.StarFieldLayer();
+                var atmosphereLayer = new WorldWind.AtmosphereLayer();
+                var now = new Date();
+                starFieldLayer.time = now;
+                atmosphereLayer.time = now;
+                var layers = [
+                    // Imagery layers.
+                    {layer: new WorldWind.BMNGLayer(), enabled: true},
+                    {layer: new WorldWind.BMNGLandsatLayer(), enabled: false},
+                    {layer: new WorldWind.BingAerialLayer(null), enabled: false},
+                    {layer: new WorldWind.BingAerialWithLabelsLayer(null), enabled: false},
+                    {layer: new WorldWind.BingRoadsLayer(null), enabled: false},
+                    {layer: starFieldLayer, enabled: true},
+                    // Add atmosphere layer on top of all base layers.
+                    {layer: atmosphereLayer, enabled: true},
+                    // WorldWindow UI layers.
+                    {layer: new WorldWind.CompassLayer(), enabled: true},
+                    {layer: new WorldWind.CoordinatesDisplayLayer(wwd), enabled: true},
+                    {layer: new WorldWind.ViewControlsLayer(wwd), enabled: true}
+                ];
 
-                // Add some image layers to the WorldWindow's globe.
-                wwd.addLayer(new WorldWind.BMNGOneImageLayer());
-                wwd.addLayer(new WorldWind.BMNGLandsatLayer());
+                for (let i = 0; i < layers.length; i++) {
+                    layers[i].layer.enabled = layers[i].enabled;
+                    wwd.addLayer(layers[i].layer);
+                }
 
-                // Add a compass, a coordinates display and some view controls to the WorldWindow.
-                wwd.addLayer(new WorldWind.CompassLayer());
-                wwd.addLayer(new WorldWind.CoordinatesDisplayLayer(wwd));
-                wwd.addLayer(new WorldWind.ViewControlsLayer(wwd));
-
-                // ISS 3D model
                 wwd.addLayer(modelLayer);
-                var position = new WorldWind.Position(20.0, -75.0, 800000.0);
-                var config = {dirPath: '/3D-model/'};
-                var colladaLoader = new WorldWind.ColladaLoader(position, config);
-				colladaLoader.load("ISS-model.dae", function (colladaModel) {
-				    colladaModel.scale = 2000;
-				    modelLayer.addRenderable(colladaModel);
-				});
+                
             }
 
-            function draw_iss_route(){
-                var issRouteAttributes = new WorldWind.ShapeAttributes();
-                issRouteAttributes.outlineColor = new WorldWind.Color(0, 1, 0, 1);
-                issRouteAttributes.interiorColor = new WorldWind.Color(0, 0, 1, 0.5);
-                // var positions = get_iss_route();
-                axios.get("https://live.ariss.org/iss.txt")
-                 .then((res) => {
-                    console.log(res.data);
-                    lines = res.data.split(/\r?\n/);
-                    
-                    var tleLine1 = lines[1],
-                        tleLine2 = lines[2];    
+            var issRouteAttributes = new WorldWind.ShapeAttributes();
+            issRouteAttributes.outlineColor = new WorldWind.Color(0, 1, 0, 1);
+            issRouteAttributes.interiorColor = new WorldWind.Color(0, 0, 1, 0.5);
+            
+            var positions = [];
+            axios.get("https://live.ariss.org/iss.txt")
+                .then((res) => {
+                console.log(res.data);
+                lines = res.data.split(/\r?\n/);
+                
+                var tleLine1 = lines[1],
+                    tleLine2 = lines[2];    
 
-                    var satrec = satellite.twoline2satrec(tleLine1, tleLine2);
-                    var t = new Date();
-                    var positions = [];
-                    for(var i=0;i<18000;i++){
-                        t.setSeconds(t.getSeconds() + 1);
-                        var pos = get_iss_pos(satrec, t);
-                        positions.push(new WorldWind.Position(pos[1], pos[0], pos[2]*1000));
+                var satrec = satellite.twoline2satrec(tleLine1, tleLine2);
+                var t = new Date();
+                t.setSeconds(t.getSeconds() - 9000);
+                for(var i=0;i<18000;i++){
+                    t.setSeconds(t.getSeconds() + 1);
+                    var pos = get_iss_pos(satrec, t);
+                    positions.push(new WorldWind.Position(pos[1], pos[0], pos[2]*1000));
+                }
+                var iss_route = new WorldWind.Path(positions, issRouteAttributes);
+                iss_route.extrude = true;
+                modelLayer.addRenderable(iss_route);
+
+                var prevColladaModel;
+                setInterval(function () {
+                    // ISS 3D model
+                    var config = {dirPath: '/Nasa_Space_App/3D-model/'};
+                    position = positions[9000];
+                    var colladaLoader = new WorldWind.ColladaLoader(position, config);
+                    if(prevColladaModel){
+                        modelLayer.removeRenderable(prevColladaModel);
                     }
-                    var iss_route = new WorldWind.Path(positions, issRouteAttributes);
-                    iss_route.extrude = true;
-                    modelLayer.addRenderable(iss_route);
-                });
-            }
-
-            draw_iss_route();
+                    colladaLoader.load("textured.dae", function (colladaModel) {
+                        colladaModel.scale = 140000;
+                        modelLayer.addRenderable(colladaModel);
+                        prevColladaModel = colladaModel;
+                    });
+                    positions.shift();
+                    var t = new Date();
+                    t.setSeconds(t.getSeconds() + 9000);
+                    var pos = get_iss_pos(satrec, t);
+                    positions.push(new WorldWind.Position(pos[1], pos[0], pos[2]*1000));
+                    var add_route = new WorldWind.Path([positions[positions.length-2], positions[positions.length-1]], issRouteAttributes);
+                    add_route.extrude = true;
+                    modelLayer.addRenderable(add_route);
+                }, 1000);
+            });
         </script>
     </body>
 </html>
+
+
+
