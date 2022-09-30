@@ -8,10 +8,18 @@
         <script src="https://files.worldwind.arc.nasa.gov/artifactory/web/0.9.0/worldwind.min.js"
                 type="text/javascript">
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="satellite.min.js"></script>
         <style>
+            body {
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
             #canvas {
-                width: 90vw;
-                height: 90vh;
+                width: 100vw;
+                height: 100vh;
+                background-color: black;
             }
         </style>
     </head>
@@ -25,8 +33,32 @@
         <script>
             // Register an event listener to be called when the page is loaded.
             window.addEventListener("load", eventWindowLoaded, false);
+            window.addEventListener("dblclick", focusISS);
+
+            function get_iss_pos(satrec, time) {
+                //  Propagate satellite using JavaScript Date
+                var positionAndVelocity = satellite.propagate(satrec, time);
+
+                // The position_velocity result is a key-value pair of ECI coordinates.
+                // These are the base results from which all other coordinates are derived.
+                var positionEci = positionAndVelocity.position,
+                    velocityEci = positionAndVelocity.velocity;
+
+                // You will need GMST for some of the coordinate transforms.
+                // http://en.wikipedia.org/wiki/Sidereal_time#Definition
+                var gmst = satellite.gstime(time);
+                var positionGd    = satellite.eciToGeodetic(positionEci, gmst);
+                // Geodetic coords are accessed via `longitude`, `latitude`, `height`.
+                var longitude = positionGd.longitude,
+                    latitude  = positionGd.latitude,
+                    height    = positionGd.height;
+
+                var a = 57.2957795;
+                return [longitude*a, latitude*a, height];
+            }
 
             // Define the event listener to initialize Web WorldWind.
+            var modelLayer = new WorldWind.RenderableLayer();
             function eventWindowLoaded() {
                 // Create a WorldWindow for the canvas.
                 var wwd = new WorldWind.WorldWindow("canvas");
@@ -41,7 +73,6 @@
                 wwd.addLayer(new WorldWind.ViewControlsLayer(wwd));
 
                 // ISS 3D model
-                var modelLayer = new WorldWind.RenderableLayer();
                 wwd.addLayer(modelLayer);
                 var position = new WorldWind.Position(20.0, -75.0, 800000.0);
                 var config = {dirPath: '/3D-model/'};
@@ -51,6 +82,35 @@
 				    modelLayer.addRenderable(colladaModel);
 				});
             }
+
+            function draw_iss_route(){
+                var issRouteAttributes = new WorldWind.ShapeAttributes();
+                issRouteAttributes.outlineColor = new WorldWind.Color(0, 1, 0, 1);
+                issRouteAttributes.interiorColor = new WorldWind.Color(0, 0, 1, 0.5);
+                // var positions = get_iss_route();
+                axios.get("https://live.ariss.org/iss.txt")
+                 .then((res) => {
+                    console.log(res.data);
+                    lines = res.data.split(/\r?\n/);
+                    
+                    var tleLine1 = lines[1],
+                        tleLine2 = lines[2];    
+
+                    var satrec = satellite.twoline2satrec(tleLine1, tleLine2);
+                    var t = new Date();
+                    var positions = [];
+                    for(var i=0;i<18000;i++){
+                        t.setSeconds(t.getSeconds() + 1);
+                        var pos = get_iss_pos(satrec, t);
+                        positions.push(new WorldWind.Position(pos[1], pos[0], pos[2]*1000));
+                    }
+                    var iss_route = new WorldWind.Path(positions, issRouteAttributes);
+                    iss_route.extrude = true;
+                    modelLayer.addRenderable(iss_route);
+                });
+            }
+
+            draw_iss_route();
         </script>
     </body>
 </html>
