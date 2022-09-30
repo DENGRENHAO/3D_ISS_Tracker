@@ -3,7 +3,7 @@
 <html>
     <head lang="en">
         <meta charset="UTF-8">
-        <title>WorldWind Example</title>
+        <title>ISS Tracker</title>
         <!-- Include the Web WorldWind library. -->
         <script src="https://files.worldwind.arc.nasa.gov/artifactory/web/0.9.0/worldwind.min.js"
                 type="text/javascript">
@@ -46,10 +46,10 @@
                 var position = new WorldWind.Position(20.0, -75.0, 800000.0);
                 var config = {dirPath: '/3D-model/'};
                 var colladaLoader = new WorldWind.ColladaLoader(position, config);
-				colladaLoader.load("ISS-model.dae", function (colladaModel) {
-				    colladaModel.scale = 2000;
-				    modelLayer.addRenderable(colladaModel);
-				});
+                colladaLoader.load("ISS_stationary.dae", function (colladaModel) {
+                    colladaModel.scale = 2000;
+                    modelLayer.addRenderable(colladaModel);
+                });
             }
         </script>
     </body>
