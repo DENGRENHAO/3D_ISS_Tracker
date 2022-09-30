@@ -29,14 +29,14 @@
             </canvas>
         </div>
         <script>
-            // Register an event listener to be called when the page is loaded.
             window.addEventListener("load", eventWindowLoaded, false);
+            window.addEventListener("dblclick", focusISS);
+            
+            // Create a WorldWindow for the canvas.
+            var wwd = new WorldWind.WorldWindow("canvas");
+            var position;
 
-            // Define the event listener to initialize Web WorldWind.
             function eventWindowLoaded() {
-                // Create a WorldWindow for the canvas.
-                var wwd = new WorldWind.WorldWindow("canvas");
-
                 var starFieldLayer = new WorldWind.StarFieldLayer();
                 var atmosphereLayer = new WorldWind.AtmosphereLayer();
                 var now = new Date();
@@ -66,14 +66,17 @@
                 // ISS 3D model
                 var modelLayer = new WorldWind.RenderableLayer();
                 wwd.addLayer(modelLayer);
-                var position = new WorldWind.Position(20.0, -75.0, 800000.0);
+                position = new WorldWind.Position(20.0, -75.0, 800000.0);
                 var config = {dirPath: '/Nasa_Space_App/3D-model/'};
                 var colladaLoader = new WorldWind.ColladaLoader(position, config);
-                console.log(colladaLoader);
 				colladaLoader.load("ISS-light.dae", function (colladaModel) {
 				    colladaModel.scale = 140000;
 				    modelLayer.addRenderable(colladaModel);
 				});
+            }
+
+            function focusISS() {
+                wwd.goTo(new WorldWind.Location(position.latitude, position.longitude));
             }
         </script>
     </body>
