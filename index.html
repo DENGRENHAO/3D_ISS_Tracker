@@ -31,14 +31,26 @@
                 // Create a WorldWindow for the canvas.
                 var wwd = new WorldWind.WorldWindow("canvas");
 
-                // Add some image layers to the WorldWindow's globe.
-                wwd.addLayer(new WorldWind.BMNGOneImageLayer());
-                wwd.addLayer(new WorldWind.BMNGLandsatLayer());
+                var layers = [
+                    // Imagery layers.
+                    {layer: new WorldWind.BMNGLayer(), enabled: true},
+                    {layer: new WorldWind.BMNGLandsatLayer(), enabled: false},
+                    {layer: new WorldWind.BingAerialLayer(null), enabled: false},
+                    {layer: new WorldWind.BingAerialWithLabelsLayer(null), enabled: false},
+                    {layer: new WorldWind.BingRoadsLayer(null), enabled: false},
+                    {layer: new WorldWind.StarFieldLayer(), enabled: false},
+                    // Add atmosphere layer on top of all base layers.
+                    {layer: new WorldWind.AtmosphereLayer(), enabled: true},
+                    // WorldWindow UI layers.
+                    {layer: new WorldWind.CompassLayer(), enabled: true},
+                    {layer: new WorldWind.CoordinatesDisplayLayer(wwd), enabled: true},
+                    {layer: new WorldWind.ViewControlsLayer(wwd), enabled: true}
+                ];
 
-                // Add a compass, a coordinates display and some view controls to the WorldWindow.
-                wwd.addLayer(new WorldWind.CompassLayer());
-                wwd.addLayer(new WorldWind.CoordinatesDisplayLayer(wwd));
-                wwd.addLayer(new WorldWind.ViewControlsLayer(wwd));
+                for (let i = 0; i < layers.length; i++) {
+                    layers[i].layer.enabled = layers[i].enabled;
+                    wwd.addLayer(layers[i].layer);
+                }
 
                 // ISS 3D model
                 var modelLayer = new WorldWind.RenderableLayer();
@@ -46,10 +58,11 @@
                 var position = new WorldWind.Position(20.0, -75.0, 800000.0);
                 var config = {dirPath: '/3D-model/'};
                 var colladaLoader = new WorldWind.ColladaLoader(position, config);
-				colladaLoader.load("ISS-stationary-2.dae", function (colladaModel) {
-				    colladaModel.scale = 2000;
-				    modelLayer.addRenderable(colladaModel);
-				});
+                colladaLoader.load("ISS-stationary-2.dae", function (colladaModel) {
+                    colladaModel.scale = 2000;
+                    modelLayer.addRenderable(colladaModel);
+                });
+                console.log(colladaLoader);
             }
         </script>
     </body>
