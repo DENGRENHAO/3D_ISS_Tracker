@@ -46,10 +46,10 @@
                 var position = new WorldWind.Position(20.0, -75.0, 800000.0);
                 var config = {dirPath: '/3D-model/'};
                 var colladaLoader = new WorldWind.ColladaLoader(position, config);
-                colladaLoader.load("ISS_stationary.dae", function (colladaModel) {
-                    colladaModel.scale = 2000;
-                    modelLayer.addRenderable(colladaModel);
-                });
+				colladaLoader.load("ISS-stationary-2.dae", function (colladaModel) {
+				    colladaModel.scale = 2000;
+				    modelLayer.addRenderable(colladaModel);
+				});
             }
         </script>
     </body>
