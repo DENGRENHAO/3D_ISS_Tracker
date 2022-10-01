@@ -98,7 +98,7 @@
                     height    = positionGd.height;
 
                 var a = 57.2957795;
-                return [latitude * a, longitude * a, height, velocityEci];
+                return [latitude * a, longitude * a, height * 1000, velocityEci];
             }
 
             // Create a WorldWindow for the canvas.
@@ -166,7 +166,7 @@
                 var t = time - issRouteSec/2;
                 for (var i = 0; i < issRouteSec; i++) {
                     var pos = get_iss_pos(satrec, t + i);
-                    positions[i] = new WorldWind.Position(pos[0], pos[1], pos[2] * 1000);
+                    positions[i] = new WorldWind.Position(pos[0], pos[1], pos[2]);
                 }
 
                 return positions;
