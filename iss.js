@@ -93,7 +93,7 @@ function draw_ISS(time) {
 	    model.yRotation = -10000/90*long_diff/180;
 
     	la_diff = pos[0] - sun_pos.latitude;
-	    long_diff = pos[1] - sun_pos.longitute;
+	    long_diff = pos[1] - sun_pos.longitude;
 
     	model.xRotation = 10000/90*la_diff/180;
 	    model.yRotation = 10000/90*long_diff/180;
