@@ -33,11 +33,10 @@
         <script>
             const issRouteSec = 6000;
             window.addEventListener("load", eventWindowLoaded, false);
-            window.addEventListener("load", focusISS, false);
             window.addEventListener("dblclick", focusISS);
 
             function focusISS() {
-                wwd.goTo(new WorldWind.Location(position.latitude, position.longitude));
+                wwd.goTo(new WorldWind.Location(positions[issRouteSec/2]['latitude'], positions[issRouteSec/2]['longitude']));
             }
 
             function get_iss_pos(satrec, time) {
@@ -59,12 +58,11 @@
                     height    = positionGd.height;
 
                 var a = 57.2957795;
-                return [longitude*a, latitude*a, height];
+                return [longitude * a, latitude * a, height];
             }
 
             // Create a WorldWindow for the canvas.
             var wwd = new WorldWind.WorldWindow("canvas");
-            var position;
             var modelLayer = new WorldWind.RenderableLayer();
 
             // Define the event listener to initialize Web WorldWind.
@@ -96,17 +94,26 @@
                 }
 
                 wwd.addLayer(modelLayer);
-                
             }
 
+            
+            // ISS 3D model
+            // var config = {dirPath: '/3D-model/'};
+            var config = {dirPath: '/Nasa_Space_App/3D-model/'};
+            var colladaLoader = new WorldWind.ColladaLoader(positions ? positions[issRouteSec/2] : [0, 0, 0], config);
+            colladaLoader.load("textured.dae", function (colladaModel) {
+                colladaModel.scale = 140000;
+                modelLayer.addRenderable(colladaModel);
+            });
+
+            var positions = [];
             var issRouteAttributes = new WorldWind.ShapeAttributes();
             issRouteAttributes.outlineColor = new WorldWind.Color(0, 1, 0, 1);
-            issRouteAttributes.interiorColor = new WorldWind.Color(0, 0, 1, 0.5);
-            
-            var positions = [];
+            issRouteAttributes.interiorColor = new WorldWind.Color(0, 0, 1, 0);
+            // fetch ISS data
             axios.get("https://live.ariss.org/iss.txt")
                 .then((res) => {
-                console.log(res.data);
+                //console.log(res.data);
                 lines = res.data.split(/\r?\n/);
                 
                 var tleLine1 = lines[1],
@@ -118,46 +125,45 @@
                 for(var i=0;i<issRouteSec;i++){
                     t.setSeconds(t.getSeconds() + 1);
                     var pos = get_iss_pos(satrec, t);
-                    positions.push(new WorldWind.Position(pos[1], pos[0], pos[2]*1000));
+                    positions.push(new WorldWind.Position(pos[1], pos[0], pos[2] * 1000));
                 }
                 
-
-                var prevColladaModel;
-                setInterval(function () {
-                    // ISS 3D model
-                    var config = {dirPath: '/3D-model/'};
+                // calculate ISS position every second
+                function draw_ISS() {
                     position = positions[issRouteSec/2];
-                    var colladaLoader = new WorldWind.ColladaLoader(position, config);
-                    if(prevColladaModel){
-                        prevColladaModel._position = position;
-                    }
-                    else{
-                        colladaLoader.load("textured.dae", function (colladaModel) {
-                            colladaModel.scale = 140000;
-                            modelLayer.addRenderable(colladaModel);
-                            prevColladaModel = colladaModel;
-                        });
-                    }
-                    
+                    colladaLoader.position['latitude'] = position['latitude'];
+                    colladaLoader.position['longitude'] = position['longitude'];
+                    colladaLoader.position['altitude'] = position['altitude'];
                     positions.shift();
                     var t = new Date();
                     t.setSeconds(t.getSeconds() + issRouteSec/2);
                     var pos = get_iss_pos(satrec, t);
-                    positions.push(new WorldWind.Position(pos[1], pos[0], pos[2]*1000));
-                }, 1000);
+                    positions.push(new WorldWind.Position(pos[1], pos[0], pos[2] * 1000));
+                    modelLayer.refresh();
+                    wwd.redraw();
+                };
+
+                draw_ISS();
+                setInterval(draw_ISS, 1000);
 
                 var issRoute = new WorldWind.Path(positions, issRouteAttributes);
                 issRoute.extrude = true;
                 modelLayer.addRenderable(issRoute);
                 var prevIssRoute = issRoute;
-                setInterval(function () {
+
+                function draw_route() {
                     modelLayer.removeRenderable(prevIssRoute);
                     var issRoute = new WorldWind.Path(positions, issRouteAttributes);
                     issRoute.extrude = true;
                     modelLayer.addRenderable(issRoute);
                     prevIssRoute = issRoute;
-                }, 5000);
-            });
+                    modelLayer.refresh();
+                    wwd.redraw();
+                }
+                
+                draw_route();
+                setInterval(draw_route, 5000);
+            }).then(() => {focusISS();});
         </script>
     </body>
 </html>
