@@ -50,8 +50,13 @@
                 var time = new Date();
                 time.setMinutes(time.getMinutes() + parseInt(input.value));
                 ele.innerText = time;
+                // draw_ISS(get_render_time());
                 updateISS();
+
+                var ori_time = wwd.goToAnimator.travelTime;
+                wwd.goToAnimator.travelTime = 0;
                 focusISS();
+                wwd.goToAnimator.travelTime = ori_time;
             }
             function get_user_time() {
                 var input = document.getElementById("time-input");
@@ -71,11 +76,16 @@
                 return t;
             }
 
-            function getCurentTime() {
+            function get_current_time() {
                 return Math.round(Date.now() / 1000)
             }
 
+            function get_render_time() {
+                return get_current_time() + get_user_time();
+            }
+
             function focusISS() {
+                wwd.goToAnimator.animationFrequency = 10;
                 wwd.goTo(new WorldWind.Location(cur_iss_position[0], cur_iss_position[1]));
             }
 
@@ -163,11 +173,11 @@
             });
 
             function get_route(time) {
-                var positions = new Array(issRouteSec);
+                var positions = [];
                 var t = time - issRouteSec/2;
-                for (var i = 0; i < issRouteSec; i++) {
+                for (var i = 0; i < issRouteSec; i+=250) {
                     var pos = get_iss_pos(satrec, t + i);
-                    positions[i] = new WorldWind.Position(pos[0], pos[1], pos[2]);
+                    positions.push(new WorldWind.Position(pos[0], pos[1], pos[2]));
                 }
 
                 return positions;
@@ -204,9 +214,11 @@
             };
 
             function updateISS() {
-                draw_ISS(getCurentTime() + get_user_time());
+                var time = get_render_time();
+                draw_ISS(time);
+                draw_route(get_render_time());
                 // info
-                var pos = get_iss_pos(satrec, getCurentTime());
+                var pos = get_iss_pos(satrec, time);
                 var velocity = Math.sqrt(pos[3]['x'] * pos[3]['x'] + pos[3]['y'] * pos[3]['y'] + pos[3]['z'] * pos[3]['z']);
                 var lo = roundDecimal(pos[1], 4);
                 var la = roundDecimal(pos[0], 4);
@@ -236,12 +248,6 @@
                 }).then(() => {
                     updateISS();
                     setInterval(updateISS, 1000);
-
-                    function updateRoute() {
-                        draw_route(getCurentTime() + get_user_time());
-                    }
-                    updateRoute();
-                    setInterval(updateRoute, 1000);
                     focusISS();
                 });
         </script>
