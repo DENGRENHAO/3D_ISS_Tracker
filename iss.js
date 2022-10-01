@@ -1,0 +1,107 @@
+// ISS 3D model
+var config = {dirPath: '/Nasa_Space_App/3D-model/'};
+var cur_iss_position = [0, 0, 0];
+var colladaLoader = new WorldWind.ColladaLoader(
+    new WorldWind.Position(cur_iss_position[0], cur_iss_position[1], cur_iss_position[2] * 1000),
+    config
+    );
+
+colladaLoader.load("textured.dae", function (colladaModel) {
+    colladaModel.scale = 140000;
+    modelLayer.addRenderable(colladaModel);
+});
+
+let roundDecimal = function (val, precision) {
+          return Math.round(Math.round(val * Math.pow(10, (precision || 0) + 1)) / 10) / Math.pow(10, (precision || 0));
+}
+const issRouteSec = 6000;
+
+function focusISS() {
+    wwd.goToAnimator.animationFrequency = 10;
+    wwd.goTo(new WorldWind.Location(cur_iss_position[0], cur_iss_position[1]));
+}
+
+function get_iss_pos(satrec, time) {
+    time = toDateTime(time);
+    //  Propagate satellite using JavaScript Date
+    var positionAndVelocity = satellite.propagate(satrec, time);
+
+    // The position_velocity result is a key-value pair of ECI coordinates.
+    // These are the base results from which all other coordinates are derived.
+    var positionEci = positionAndVelocity.position,
+        velocityEci = positionAndVelocity.velocity;
+
+    // You will need GMST for some of the coordinate transforms.
+    // http://en.wikipedia.org/wiki/Sidereal_time#Definition
+    var gmst = satellite.gstime(time);
+    var positionGd    = satellite.eciToGeodetic(positionEci, gmst);
+    // Geodetic coords are accessed via `longitude`, `latitude`, `height`.
+    var longitude = positionGd.longitude,
+        latitude  = positionGd.latitude,
+        height    = positionGd.height;
+
+    var a = 57.2957795;
+    return [latitude * a, longitude * a, height * 1000, velocityEci];
+}
+
+function get_route(time) {
+    var positions = [];
+    var t = time - issRouteSec/2;
+    for (var i = 0; i < issRouteSec; i+=250) {
+        var pos = get_iss_pos(satrec, t + i);
+        positions.push(new WorldWind.Position(pos[0], pos[1], pos[2]));
+    }
+
+    return positions;
+}
+
+var issRouteAttributes = new WorldWind.ShapeAttributes();
+issRouteAttributes.outlineColor = new WorldWind.Color(0, 1, 0, 1);
+issRouteAttributes.interiorColor = new WorldWind.Color(0, 0, 1, 0);
+var prevIssRoute;
+
+function draw_route(time) {
+    if (prevIssRoute) {
+        modelLayer.removeRenderable(prevIssRoute);
+    }
+    
+    var issRoute = new WorldWind.Path(get_route(time), issRouteAttributes);
+    issRoute.extrude = true;
+    modelLayer.addRenderable(issRoute);
+    modelLayer.refresh();
+    wwd.redraw();
+
+    prevIssRoute = issRoute;
+}
+
+// calculate ISS position every second
+function draw_ISS(time) {
+    var pos = get_iss_pos(satrec, time)
+    cur_iss_position = pos;
+    colladaLoader.position['latitude'] = pos[0];
+    colladaLoader.position['longitude'] = pos[1];
+    colladaLoader.position['altitude'] = pos[2];
+    modelLayer.refresh();
+    wwd.redraw();
+};
+
+function updateISS() {
+    var time = get_render_time();
+    draw_ISS(time);
+    draw_route(get_render_time());
+    // info
+    var pos = get_iss_pos(satrec, time);
+    var velocity = Math.sqrt(pos[3]['x'] * pos[3]['x'] + pos[3]['y'] * pos[3]['y'] + pos[3]['z'] * pos[3]['z']);
+    var lo = roundDecimal(pos[1], 4);
+    var la = roundDecimal(pos[0], 4);
+    var info = `
+        Longtitude: ${Math.abs(lo)}${lo > 0 ? "°E" : "°W"}
+        Latitude: ${Math.abs(la)}${la > 0 ? "°N" : "°S"}
+        Altitude: ${roundDecimal(pos[2] / 1000, 4)}km
+        Velocity: ${roundDecimal(velocity, 4)}km/s
+        `
+    text.text = info;
+    // redraw
+    modelLayer.refresh();
+    wwd.redraw();
+}
