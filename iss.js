@@ -99,6 +99,7 @@ function updateISS() {
         Latitude: ${Math.abs(la)}${la > 0 ? "°N" : "°S"}
         Altitude: ${roundDecimal(pos[2] / 1000, 4)}km
         Velocity: ${roundDecimal(velocity, 4)}km/s
+        Time: ${toDateTime(get_render_time()).toISOString()}
         `
     text.text = info;
     // redraw
