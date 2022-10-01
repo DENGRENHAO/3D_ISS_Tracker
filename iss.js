@@ -80,7 +80,7 @@ function draw_route(time) {
 // calculate ISS position every second
 var la_diff = 0, long_diff = 0;
 function draw_ISS(time) {
-    var pos = get_iss_pos(satrec, time)
+    var pos = get_iss_pos(satrec, time);
     cur_iss_position = pos;
     colladaLoader.position['latitude'] = pos[0];
     colladaLoader.position['longitude'] = pos[1];
