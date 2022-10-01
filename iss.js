@@ -6,8 +6,11 @@ var colladaLoader = new WorldWind.ColladaLoader(
     config
     );
 
+var model;
 colladaLoader.load("textured.dae", function (colladaModel) {
+	model = colladaModel;
     colladaModel.scale = 140000;
+	colladaModel.xRotation = 20000;
     modelLayer.addRenderable(colladaModel);
 });
 
@@ -75,12 +78,24 @@ function draw_route(time) {
 }
 
 // calculate ISS position every second
+var la_diff = 0, long_diff = 0;
 function draw_ISS(time) {
     var pos = get_iss_pos(satrec, time)
     cur_iss_position = pos;
     colladaLoader.position['latitude'] = pos[0];
     colladaLoader.position['longitude'] = pos[1];
     colladaLoader.position['altitude'] = pos[2];
+
+	var sun_pos = SunPosition.getAsGeographicLocation(new Date());
+	model.xRotation = -10000/90*la_diff/180;
+	model.yRotation = -10000/90*long_diff/180;
+
+	la_diff = pos[0] - sun_pos.latitude;
+	long_diff = pos[1] - sun_pos.longitute.
+
+	model.xRotation = 10000/90*la_diff/180;
+	model.yRotation = 10000/90*long_diff/180;
+
     modelLayer.refresh();
     wwd.redraw();
 };
