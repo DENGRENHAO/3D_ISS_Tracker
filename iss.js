@@ -95,8 +95,11 @@ function draw_ISS(time) {
 	    long_diff = pos[1] - sun_pos.longitude;
 
     	model.xRotation = 10000/90*la_diff/180;
-	    model.yRotation = 10000/90*long_diff/180;
+	    model.yRotation = 10000/90*long_diff/360;
     }
+
+    // Sphere coor. to Cartesian coor.
+    // console.log("coor: ", sph2car(pos[0], pos[1], pos[2]));
 
     modelLayer.refresh();
     wwd.redraw();
