@@ -44,9 +44,22 @@
             </div>
         </div>
         <script>
+            function update_time() {
+                var ele = document.getElementById("time");
+                var input = document.getElementById("time-input");
+                var time = new Date();
+                time.setMinutes(time.getMinutes() + parseInt(input.value));
+                ele.innerText = time;
+                setTimeout(focusISS, 1000);
+            }
+            function get_user_time() {
+                var input = document.getElementById("time-input");
+                return parseInt(input.value) * 60;
+            }
+
             let roundDecimal = function (val, precision) {
-				return Math.round(Math.round(val * Math.pow(10, (precision || 0) + 1)) / 10) / Math.pow(10, (precision || 0));
-			}
+      				return Math.round(Math.round(val * Math.pow(10, (precision || 0) + 1)) / 10) / Math.pow(10, (precision || 0));
+            }
             const issRouteSec = 6000;
             window.addEventListener("load", eventWindowLoaded, false);
             window.addEventListener("dblclick", focusISS);
@@ -136,7 +149,6 @@
 
             
             // ISS 3D model
-            //var config = {dirPath: '/3D-model/'};
             var config = {dirPath: '/Nasa_Space_App/3D-model/'};
             var cur_iss_position = [0, 0, 0];
             var colladaLoader = new WorldWind.ColladaLoader(
@@ -203,7 +215,7 @@
                 satrec = satellite.twoline2satrec(tleLine1, tleLine2);
                 }).then(() => {
                     function updateISS() {
-                        draw_ISS(getCurentTime());
+                        draw_ISS(getCurentTime() + get_user_time());
                         // info
                         var pos = get_iss_pos(satrec, getCurentTime());
                         var velocity = Math.sqrt(pos[3]['x'] * pos[3]['x'] + pos[3]['y'] * pos[3]['y'] + pos[3]['z'] * pos[3]['z']);
@@ -224,7 +236,7 @@
                     setInterval(updateISS, 1000);
 
                     function updateRoute() {
-                        draw_route(getCurentTime());
+                        draw_route(getCurentTime() + get_user_time());
                     }
                     updateRoute();
                     setInterval(updateRoute, 1000);
