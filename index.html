@@ -52,10 +52,10 @@
                 filter: brightness(110%);
                 cursor: pointer;
             }
-            .toggle-debris {
-                position: relative;
-                top: 46px;
-                left: 16px;   
+            #toggle-debris {
+                /* position: relative; */
+                top: 750px;
+                left: 1300px;   
             }
         </style>
     </head>
@@ -65,13 +65,13 @@
                 <input type="range" id="time-input" min="-180" max="180" oninput="update_time();">
                 <button onclick="to_default_time();">Set to current time</button>
             </div>
-            <div class="toggle-debris">
-                <button id="debrisToggle" onclick="toggleDebris();">Toggle Debris</button>
-            </div>
             <!-- Create a canvas for Web WorldWind. -->
             <canvas id="canvas">
                 Your browser does not support HTML5 Canvas.
             </canvas>
+        </div>
+        <div id="toggle-debris" style="position: relative;">
+            <button id="debrisToggle" onclick="toggleDebris();">Toggle Debris</button>
         </div>
         <script src="timeline.js"></script>
         <script src="iss.js"></script>
