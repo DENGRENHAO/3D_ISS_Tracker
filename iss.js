@@ -87,14 +87,17 @@ function draw_ISS(time) {
     colladaLoader.position['altitude'] = pos[2];
 
 	var sun_pos = SunPosition.getAsGeographicLocation(new Date());
-	model.xRotation = -10000/90*la_diff/180;
-	model.yRotation = -10000/90*long_diff/180;
+    console.log(model);
+    if (model) {
+    	model.xRotation = -10000/90*la_diff/180;
+	    model.yRotation = -10000/90*long_diff/180;
 
-	la_diff = pos[0] - sun_pos.latitude;
-	long_diff = pos[1] - sun_pos.longitute;
+    	la_diff = pos[0] - sun_pos.latitude;
+	    long_diff = pos[1] - sun_pos.longitute;
 
-	model.xRotation = 10000/90*la_diff/180;
-	model.yRotation = 10000/90*long_diff/180;
+    	model.xRotation = 10000/90*la_diff/180;
+	    model.yRotation = 10000/90*long_diff/180;
+    }
 
     modelLayer.refresh();
     wwd.redraw();
