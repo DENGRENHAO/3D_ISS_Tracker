@@ -87,7 +87,6 @@ function draw_ISS(time) {
     colladaLoader.position['altitude'] = pos[2];
 
 	var sun_pos = SunPosition.getAsGeographicLocation(new Date());
-    console.log(model);
     if (model) {
     	model.xRotation = -10000/90*la_diff/180;
 	    model.yRotation = -10000/90*long_diff/180;
