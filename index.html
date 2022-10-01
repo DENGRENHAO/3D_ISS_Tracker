@@ -117,6 +117,9 @@
             // Define the event listener to initialize Web WorldWind.
             var text;
             function eventWindowLoaded() {
+                // set timeline to 0
+                document.getElementById("time-input").value = 0;
+
                 var starFieldLayer = new WorldWind.StarFieldLayer();
                 var atmosphereLayer = new WorldWind.AtmosphereLayer();
                 var now = new Date();
