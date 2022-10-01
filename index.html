@@ -31,7 +31,9 @@
             </canvas>
         </div>
         <script>
+            const issRouteSec = 6000;
             window.addEventListener("load", eventWindowLoaded, false);
+            window.addEventListener("load", focusISS, false);
             window.addEventListener("dblclick", focusISS);
 
             function focusISS() {
@@ -112,39 +114,49 @@
 
                 var satrec = satellite.twoline2satrec(tleLine1, tleLine2);
                 var t = new Date();
-                t.setSeconds(t.getSeconds() - 9000);
-                for(var i=0;i<18000;i++){
+                t.setSeconds(t.getSeconds() - issRouteSec/2);
+                for(var i=0;i<issRouteSec;i++){
                     t.setSeconds(t.getSeconds() + 1);
                     var pos = get_iss_pos(satrec, t);
                     positions.push(new WorldWind.Position(pos[1], pos[0], pos[2]*1000));
                 }
-                var iss_route = new WorldWind.Path(positions, issRouteAttributes);
-                iss_route.extrude = true;
-                modelLayer.addRenderable(iss_route);
+                
 
                 var prevColladaModel;
                 setInterval(function () {
                     // ISS 3D model
-                    var config = {dirPath: '/Nasa_Space_App/3D-model/'};
-                    position = positions[9000];
+                    var config = {dirPath: '/3D-model/'};
+                    position = positions[issRouteSec/2];
                     var colladaLoader = new WorldWind.ColladaLoader(position, config);
                     if(prevColladaModel){
-                        modelLayer.removeRenderable(prevColladaModel);
+                        prevColladaModel._position = position;
                     }
-                    colladaLoader.load("textured.dae", function (colladaModel) {
-                        colladaModel.scale = 140000;
-                        modelLayer.addRenderable(colladaModel);
-                        prevColladaModel = colladaModel;
-                    });
+                    else{
+                        colladaLoader.load("textured.dae", function (colladaModel) {
+                            colladaModel.scale = 140000;
+                            modelLayer.addRenderable(colladaModel);
+                            prevColladaModel = colladaModel;
+                        });
+                    }
+                    
                     positions.shift();
                     var t = new Date();
-                    t.setSeconds(t.getSeconds() + 9000);
+                    t.setSeconds(t.getSeconds() + issRouteSec/2);
                     var pos = get_iss_pos(satrec, t);
                     positions.push(new WorldWind.Position(pos[1], pos[0], pos[2]*1000));
-                    var add_route = new WorldWind.Path([positions[positions.length-2], positions[positions.length-1]], issRouteAttributes);
-                    add_route.extrude = true;
-                    modelLayer.addRenderable(add_route);
                 }, 1000);
+
+                var issRoute = new WorldWind.Path(positions, issRouteAttributes);
+                issRoute.extrude = true;
+                modelLayer.addRenderable(issRoute);
+                var prevIssRoute = issRoute;
+                setInterval(function () {
+                    modelLayer.removeRenderable(prevIssRoute);
+                    var issRoute = new WorldWind.Path(positions, issRouteAttributes);
+                    issRoute.extrude = true;
+                    modelLayer.addRenderable(issRoute);
+                    prevIssRoute = issRoute;
+                }, 5000);
             });
         </script>
     </body>
