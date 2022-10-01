@@ -14,12 +14,21 @@
             body {
                 margin: 0;
                 padding: 0;
-                overflow: hidden;
+                background-color: black;
+                color: white;
+                /*overflow: hidden;*/
             }
             #canvas {
                 width: 100vw;
                 height: 100vh;
                 background-color: black;
+            }
+            #time-input {
+                width: 80vw;
+            }
+            #timeline {
+                margin: 0 auto;
+                width: fit-content;
             }
         </style>
     </head>
@@ -29,6 +38,10 @@
             <canvas id="canvas">
                 Your browser does not support HTML5 Canvas.
             </canvas>
+            <div id="timeline">
+                <input type="range" id="time-input" min="-1440" max="1440" oninput="update_time();">
+                <div id="time">0</div>
+            </div>
         </div>
         <script>
             let roundDecimal = function (val, precision) {
@@ -113,8 +126,8 @@
 
             
             // ISS 3D model
-            //var config = {dirPath: '/3D-model/'};
-            var config = {dirPath: '/Nasa_Space_App/3D-model/'};
+            var config = {dirPath: '/3D-model/'};
+            //var config = {dirPath: '/Nasa_Space_App/3D-model/'};
             var colladaLoader = new WorldWind.ColladaLoader(positions ? positions[issRouteSec / 2] : [0, 0, 0], config);
             colladaLoader.load("textured.dae", function (colladaModel) {
                 colladaModel.scale = 140000;
@@ -143,7 +156,7 @@
                     positions.push(new WorldWind.Position(pos[1], pos[0], pos[2] * 1000));
                 }
                 
-                // calculate ISS position every second
+                // calculate ISS position
                 function draw_ISS() {
                     position = positions[issRouteSec / 2];
                     colladaLoader.position['latitude'] = position['latitude'];
@@ -199,6 +212,14 @@
                 draw_route();
                 setInterval(draw_route, 5000);
             }).then(() => {focusISS();});
+
+            function update_time() {
+                var ele = document.getElementById("time");
+                var input = document.getElementById("time-input");
+                var time = new Date();
+                time.setMinutes(time.getMinutes() + parseInt(input.value));
+                ele.innerText = time;
+            }
         </script>
     </body>
 </html>
