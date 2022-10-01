@@ -41,6 +41,9 @@
                 <input type="range" id="time-input" min="-180" max="180" oninput="update_time();">
                 <button onclick="to_default_time();">Set to current time</button>
             </div>
+            <div >
+                <button id="debrisToggle" onclick="toggleDebris();">Toggle Debris</button>
+            </div>
             <!-- Create a canvas for Web WorldWind. -->
             <canvas id="canvas">
                 Your browser does not support HTML5 Canvas.
