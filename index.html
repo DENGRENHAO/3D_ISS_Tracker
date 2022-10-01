@@ -131,9 +131,8 @@
                 var iss_route = new WorldWind.Path(positions, issRouteAttributes);
                 iss_route.extrude = true;
                 modelLayer.addRenderable(iss_route);
-
-                // calculate ISS position every second
-                setInterval(function () {
+                
+                function draw_ISS() {
                     position = positions[9000];
                     colladaLoader.position['latitude'] = position['latitude'];
                     colladaLoader.position['longitude'] = position['longitude'];
@@ -148,8 +147,11 @@
                     modelLayer.addRenderable(add_route);
                     modelLayer.refresh();
                     wwd.redraw();
-                }, 1000);
-            });
+                }
+                // calculate ISS position every second
+                draw_ISS();
+                setInterval(draw_ISS, 1000);
+            }).then(() => {focusISS();});
         </script>
     </body>
 </html>
