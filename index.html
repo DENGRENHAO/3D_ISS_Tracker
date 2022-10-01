@@ -52,6 +52,11 @@
                 filter: brightness(110%);
                 cursor: pointer;
             }
+            .toggle-debris {
+                position: relative;
+                top: 46px;
+                left: 16px;   
+            }
         </style>
     </head>
     <body>
@@ -60,7 +65,7 @@
                 <input type="range" id="time-input" min="-180" max="180" oninput="update_time();">
                 <button onclick="to_default_time();">Set to current time</button>
             </div>
-            <div >
+            <div class="toggle-debris">
                 <button id="debrisToggle" onclick="toggleDebris();">Toggle Debris</button>
             </div>
             <!-- Create a canvas for Web WorldWind. -->
