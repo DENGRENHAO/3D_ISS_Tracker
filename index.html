@@ -39,6 +39,7 @@
         <div style="position: absolute;">
             <div id="timeline">
                 <input type="range" id="time-input" min="-180" max="180" oninput="update_time();">
+                <button onclick="to_default_time();">Set to current time</button>
             </div>
             <!-- Create a canvas for Web WorldWind. -->
             <canvas id="canvas">
@@ -46,8 +47,14 @@
             </canvas>
         </div>
         <script>
+            function to_default_time() {
+                var input = document.getElementById("time-input");
+                input.value = 0;
+                update_time();
+            }
             function update_time() {
-                setTimeout(focusISS, 1000);
+                updateISS();
+                focusISS();
             }
             function get_user_time() {
                 var input = document.getElementById("time-input");
@@ -205,6 +212,25 @@
                 wwd.redraw();
             };
 
+            function updateISS() {
+                draw_ISS(getCurentTime() + get_user_time());
+                // info
+                var pos = get_iss_pos(satrec, getCurentTime());
+                var velocity = Math.sqrt(pos[3]['x'] * pos[3]['x'] + pos[3]['y'] * pos[3]['y'] + pos[3]['z'] * pos[3]['z']);
+                var lo = roundDecimal(pos[1], 4);
+                var la = roundDecimal(pos[0], 4);
+                var info = `
+                    Longtitude: ${Math.abs(lo)}${lo > 0 ? "°E" : "°W"}
+                    Latitude: ${Math.abs(la)}${la > 0 ? "°N" : "°S"}
+                    Altitude: ${roundDecimal(pos[2] / 1000, 4)}km
+                    Velocity: ${roundDecimal(velocity, 4)}km
+                    `
+                text.text = info;
+                // redraw
+                modelLayer.refresh();
+                wwd.redraw();
+            }
+
             var satrec;
             // fetch ISS data
             axios.get("https://live.ariss.org/iss.txt")
@@ -217,25 +243,6 @@
 
                 satrec = satellite.twoline2satrec(tleLine1, tleLine2);
                 }).then(() => {
-                    function updateISS() {
-                        draw_ISS(getCurentTime() + get_user_time());
-                        // info
-                        var pos = get_iss_pos(satrec, getCurentTime());
-                        var velocity = Math.sqrt(pos[3]['x'] * pos[3]['x'] + pos[3]['y'] * pos[3]['y'] + pos[3]['z'] * pos[3]['z']);
-                        var lo = roundDecimal(pos[1], 4);
-                        var la = roundDecimal(pos[0], 4);
-                        var info = `
-                            Longtitude: ${Math.abs(lo)}${lo > 0 ? "°E" : "°W"}
-                            Latitude: ${Math.abs(la)}${la > 0 ? "°N" : "°S"}
-                            Altitude: ${roundDecimal(pos[2] / 1000, 4)}km
-                            Velocity: ${roundDecimal(velocity, 4)}km
-                            Time: ${get_info_time()}
-                            `
-                        text.text = info;
-                        // redraw
-                        modelLayer.refresh();
-                        wwd.redraw();
-                    }
                     updateISS();
                     setInterval(updateISS, 1000);
 
