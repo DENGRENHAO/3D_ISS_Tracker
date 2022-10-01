@@ -19,9 +19,9 @@ function eventWindowLoaded() {
     // info
     var offset;
     var textLayer = new WorldWind.RenderableLayer("information");
-    offset = new WorldWind.Offset(WorldWind.OFFSET_FRACTION, 0.2, WorldWind.OFFSET_FRACTION, 0);
+    offset = new WorldWind.Offset(WorldWind.OFFSET_FRACTION, 0, WorldWind.OFFSET_FRACTION, 0.2);
     text = new WorldWind.ScreenText(offset, "Loading...");
-    text.attributes.offset = new WorldWind.Offset(WorldWind.OFFSET_FRACTION, 0.5, WorldWind.OFFSET_FRACTION, 0.1);
+    text.attributes.offset = new WorldWind.Offset(WorldWind.OFFSET_FRACTION, 0, WorldWind.OFFSET_FRACTION, 0);
     textLayer.addRenderable(text);
     
     var layers = [
