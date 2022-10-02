@@ -6,7 +6,9 @@
 ---
 
 ## [Website](https://dengrenhao.github.io/Nasa_Space_App/)
-![image](https://user-images.githubusercontent.com/26023540/193436886-22dd6e1d-4183-4f8b-a158-7d02a82e2ff4.png)
+**Screenshot:**
+![image](https://user-images.githubusercontent.com/42902734/193443478-0cc72d48-802c-4e25-9c54-de51a01e2cf6.png)
+
 
 ---
 
