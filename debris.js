@@ -2,7 +2,7 @@ var allDebris = [];
 var allSatrec = [];
 
 function drawDebris(time){
-    fetch("/Nasa_Space_App/data/satellites.json")
+    fetch("/3D_ISS_Tracker/data/satellites.json")
     .then(response => response.json())
     .then((json) => {
         if(allDebris.length==0){
@@ -34,7 +34,7 @@ setTimeout(drawDebris(), 1000);
 
 
 var dangerDebrisAttributes = new WorldWind.PlacemarkAttributes();
-dangerDebrisAttributes.imageSource = "/Nasa_Space_App/assets/icons/red_dot.png";
+dangerDebrisAttributes.imageSource = "/3D_ISS_Tracker/assets/icons/red_dot.png";
 dangerDebrisAttributes.imageScale = 0.5;
 var safeDebrisAttributes = new WorldWind.PlacemarkAttributes();
 safeDebrisAttributes.imageColor = new WorldWind.Color(1, 1, 1, 1);
