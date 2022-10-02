@@ -146,6 +146,7 @@ function updateISS() {
         Altitude: ${roundDecimal(pos[2] / 1000, 4)}km
         Velocity: ${roundDecimal(velocity, 4)}km/s
         Time (UTC): ${toDateTime(get_render_time()).toISOString().substring(0, 19).replace('T', ' ')}
+        Closest Debris Distance: ${Math.round(getClosestDistance())}km
         `
     text.text = info;
     draw_calotta(pos);

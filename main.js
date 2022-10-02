@@ -109,7 +109,7 @@ function get_current_date() {
 }
 
 function get_current_time() {
-    console.log("current date dev", get_current_date());
+    // console.log("current date dev", get_current_date());
     return Math.round((get_current_date() + Date.now()) / 1000);
 }
 
