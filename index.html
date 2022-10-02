@@ -57,6 +57,15 @@
                 top: 750px;
                 left: 1300px;   
             }
+            #date-selection {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                width: fit-content;
+                position: absolute;
+                top: 30px;
+                left: 20px;     
+            }
         </style>
     </head>
     <body>
@@ -69,6 +78,10 @@
             <canvas id="canvas">
                 Your browser does not support HTML5 Canvas.
             </canvas>
+            <div id="date-selection">
+                <input type="date" id="date-input" oninput="updateISS(); focusISS();">
+                <!-- <button onclick="to_default_time();">submit</button> -->
+            </div>
         </div>
         <div id="toggle-debris" style="position: relative;">
             <button id="debrisToggle" onclick="toggleDebris();">Toggle Debris</button>
