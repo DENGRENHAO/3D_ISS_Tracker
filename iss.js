@@ -59,7 +59,7 @@ function get_calotta(isspos) {
 function get_route(time) {
     var positions = [];
     var t = time - issRouteSec/2;
-    for (var i = 0; i < issRouteSec; i+=360) {
+    for (var i = 0; i <= issRouteSec; i+=360) {
         var pos = get_iss_pos(satrec, t + i);
         positions.push(new WorldWind.Position(pos[0], pos[1], pos[2]));
     }
@@ -67,26 +67,31 @@ function get_route(time) {
     return positions;
 }
 
-var issRouteAttributes = new WorldWind.ShapeAttributes();
-issRouteAttributes.outlineColor = new WorldWind.Color(0, 1, 0, 1);
-issRouteAttributes.interiorColor = new WorldWind.Color(0, 0, 1, 0);
-var prevIssRoute;
-var prevCalotta;
+var issRouteAttributes_pre = new WorldWind.ShapeAttributes();
+    issRouteAttributes_pre.outlineColor = WorldWind.Color.YELLOW;
+    issRouteAttributes_pre.interiorColor = new WorldWind.Color(0, 0, 0, 0);
+    issRouteAttributes_pre.outlineWidth = 3;
+
+var issRouteAttributes_pos = new WorldWind.ShapeAttributes();
+    issRouteAttributes_pos.outlineColor = new WorldWind.Color(1, 1, 1, 1);
+    issRouteAttributes_pos.interiorColor = new WorldWind.Color(0, 0, 0, 0);
+    issRouteAttributes_pos.outlineWidth = 3;
+
 
 function draw_route(time) {
-    if (prevIssRoute) {
-        modelLayer.removeRenderable(prevIssRoute);
-    }
+    routeLayer.removeAllRenderables();
     
-    var issRoute = new WorldWind.Path(get_route(time), issRouteAttributes);
-    issRoute.extrude = true;
-    modelLayer.addRenderable(issRoute);
-    // modelLayer.refresh();
-    // wwd.redraw();
+    var positions = get_route(time);
+    var mid = Math.floor(positions.length / 2);
+    var issRoute_pre = new WorldWind.Path(positions.slice(0, mid + 1), issRouteAttributes_pre);
+    var issRoute_pos = new WorldWind.Path(positions.slice(mid, positions.length), issRouteAttributes_pos);
+    routeLayer.addRenderable(issRoute_pre);
+    routeLayer.addRenderable(issRoute_pos);
 
-    prevIssRoute = issRoute;
+    routeLayer.refresh();
 }
 
+var prevCalotta;
 function draw_calotta(isspos) {
     var attributes = new WorldWind.ShapeAttributes(null);
         attributes.outlineColor = WorldWind.Color.YELLOW;
