@@ -18,6 +18,7 @@
 5. **Rotate the ISS** according to the position of the Sun.
 6. Visualize the **debris** in the space, and mark the closet one to the ISS.
 7. Double click to **focus** on the ISS.
+8. The ISS moves all the time.
 
 ---
 
