@@ -111,8 +111,9 @@ function draw_route(time) {
 var prevCalotta;
 function draw_calotta(isspos) {
     var attributes = new WorldWind.ShapeAttributes(null);
-        attributes.outlineColor = WorldWind.Color.YELLOW;
+        attributes.outlineColor = WorldWind.Color.GREEN;
         attributes.interiorColor = new WorldWind.Color(0, 1, 1, 0.2);
+        attributes.outlineWidth = 2;
     if (prevCalotta) {
         modelLayer.removeRenderable(prevCalotta);
     }
