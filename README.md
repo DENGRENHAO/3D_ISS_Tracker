@@ -14,3 +14,21 @@
 4. Time-travel to any moment and see the calculated position.
 5. Rotate the ISS according to the position of the Sun.
 6. Visualize the debris in the space, and mark the closet one to the ISS.
+
+
+## References
+### Software
+
+Blender (https://www.blender.org/)
+
+Web WorldWind.js (https://worldwind.arc.nasa.gov/web/)
+
+### 3D Model Files
+
+ISS 3D model (https://nasa3d.arc.nasa.gov/detail/iss-6628)
+
+### Data
+
+ISS TLE (https://live.ariss.org/tle/)
+
+Debris TLE (https://www.space-track.org/documentation#/api)
