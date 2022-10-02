@@ -13,46 +13,7 @@
 		<script src="Angle.js"></script>
 		<script src="WWMath.js"></script>
 		<script src="SunPosition.js"></script>
-        <style>
-            body {
-                margin: 0;
-                padding: 0;
-                background-color: black;
-                color: white;
-                overflow: hidden;
-            }
-            #canvas {
-                width: 100vw;
-                height: 100vh;
-                background-color: black;
-            }
-            #time-input {
-                width: 80vw;
-                height: 100%;
-                border-radius: 5px;
-                margin: 5px;
-                padding: 0;
-            }
-            #timeline {
-                display: flex;
-                align-items: center;
-                flex-direction: column;
-                width: fit-content;
-                position: absolute;
-                top: 20px;
-                left: 10px;
-                text-align: center;
-            }
-            button {
-                border-radius: 5px;
-                padding: 5px;
-                border: none;
-            }
-            button:hover {
-                filter: brightness(110%);
-                cursor: pointer;
-            }
-        </style>
+        <link href="style.css" rel="stylesheet">
     </head>
     <body>
         <div style="position: absolute;">
@@ -60,18 +21,22 @@
                 <input type="range" id="time-input" min="-180" max="180" oninput="update_time();">
                 <button onclick="to_default_time();">Set to current time</button>
             </div>
-            <div >
-                <button id="debrisToggle" onclick="toggleDebris();">Toggle Debris</button>
-            </div>
             <!-- Create a canvas for Web WorldWind. -->
             <canvas id="canvas">
                 Your browser does not support HTML5 Canvas.
             </canvas>
+            <div id="date-selection">
+                <input type="date" id="date-input" oninput="updateISS(); focusISS();">
+            </div>
+        </div>
+        <div id="toggle-debris">
+            <button id="debrisToggle" onclick="toggleDebris();">Toggle Debris</button>
         </div>
         <script src="timeline.js"></script>
         <script src="iss.js"></script>
         <script src="main.js"></script>
         <script src="debris.js"></script>
+        <script src="sph2car.js"></script>
     </body>
 </html>
 

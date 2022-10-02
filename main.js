@@ -8,6 +8,7 @@ var modelLayer = new WorldWind.RenderableLayer();
 
 // Define the event listener to initialize Web WorldWind.
 var text;
+var defaultDate;
 function eventWindowLoaded() {
     timeline_init();
 
@@ -19,9 +20,9 @@ function eventWindowLoaded() {
     // info
     var offset;
     var textLayer = new WorldWind.RenderableLayer("information");
-    offset = new WorldWind.Offset(WorldWind.OFFSET_FRACTION, 0.2, WorldWind.OFFSET_FRACTION, 0);
+    offset = new WorldWind.Offset(WorldWind.OFFSET_FRACTION, 0, WorldWind.OFFSET_FRACTION, 0.2);
     text = new WorldWind.ScreenText(offset, "Loading...");
-    text.attributes.offset = new WorldWind.Offset(WorldWind.OFFSET_FRACTION, 0.5, WorldWind.OFFSET_FRACTION, 0.1);
+    text.attributes.offset = new WorldWind.Offset(WorldWind.OFFSET_FRACTION, 0, WorldWind.OFFSET_FRACTION, 0);
     textLayer.addRenderable(text);
     
     var layers = [
@@ -48,6 +49,12 @@ function eventWindowLoaded() {
     }
 
     wwd.addLayer(modelLayer);
+
+    // set default date (today)
+    var now_date = new Date();
+    defaultDate = now_date.toISOString().split('T')[0];
+    document.getElementById("date-input").defaultValue = defaultDate;
+    // console.log(document.getElementById("date-input").value);
 }
 
 var satrec;
@@ -72,8 +79,16 @@ function toDateTime(secs) {
     return new Date(secs * 1000); // Epoch
 }
 
+function get_current_date() {
+    var input_date = document.getElementById("date-input");
+    var parsed = Date.parse(input_date.value);
+    var parsed_defaultDate = Date.parse(defaultDate);
+    // console.log(parsed, parsed_defaultDate, parsed - parsed_defaultDate);
+    return parsed - parsed_defaultDate;
+}
+
 function get_current_time() {
-    return Math.round(Date.now() / 1000)
+    return Math.round((get_current_date() + Date.now()) / 1000);
 }
 
 function get_render_time() {

@@ -121,8 +121,11 @@ function draw_ISS(time) {
 	    long_diff = pos[1] - sun_pos.longitude;
 
     	model.xRotation = 10000/90*la_diff/180;
-	    model.yRotation = 10000/90*long_diff/180;
+	    model.yRotation = 10000/90*long_diff/360;
     }
+
+    // Sphere coor. to Cartesian coor.
+    // console.log("coor: ", sph2car(pos[0], pos[1], pos[2]));
 
     modelLayer.refresh();
     wwd.redraw();
@@ -142,7 +145,7 @@ function updateISS() {
         Latitude: ${Math.abs(la)}${la > 0 ? "°N" : "°S"}
         Altitude: ${roundDecimal(pos[2] / 1000, 4)}km
         Velocity: ${roundDecimal(velocity, 4)}km/s
-        Time: ${toDateTime(get_render_time()).toISOString().substring(0, 19).replace('T', ' ')}
+        Time (UTC): ${toDateTime(get_render_time()).toISOString().substring(0, 19).replace('T', ' ')}
         `
     text.text = info;
     draw_calotta(pos);
