@@ -94,13 +94,21 @@ function toDateTime(secs) {
 
 function get_current_date() {
     var input_date = document.getElementById("date-input");
-    var parsed = Date.parse(input_date.value);
-    var parsed_defaultDate = Date.parse(defaultDate);
-    // console.log(parsed, parsed_defaultDate, parsed - parsed_defaultDate);
-    return parsed - parsed_defaultDate;
+    console.log("input date", input_date.value);
+    if (!input_date.value) {
+        console.log("Empty input date!!");
+        return 0;
+    }
+    else {
+        var parsed = Date.parse(input_date.value);
+        var parsed_defaultDate = Date.parse(defaultDate);
+        // console.log(parsed, parsed_defaultDate, parsed - parsed_defaultDate);
+        return parsed - parsed_defaultDate;
+    }
 }
 
 function get_current_time() {
+    console.log("current date dev", get_current_date());
     return Math.round((get_current_date() + Date.now()) / 1000);
 }
 
