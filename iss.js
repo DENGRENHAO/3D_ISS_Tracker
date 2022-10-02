@@ -104,6 +104,7 @@ function draw_calotta(isspos) {
 }
 
 // calculate ISS position every second
+
 var la_diff = 0, long_diff = 0;
 function draw_ISS(pos) {
     cur_iss_position = pos;
@@ -111,23 +112,17 @@ function draw_ISS(pos) {
     colladaLoader.position['longitude'] = pos[1];
     colladaLoader.position['altitude'] = pos[2];
 
-	var sun_pos = SunPosition.getAsGeographicLocation(new Date());
+	var sun_pos = calculateSunPosition(toDateTime(get_render_time()));
     if (model) {
     	model.xRotation = -10000/90*la_diff/180;
 	    model.yRotation = -10000/90*long_diff/180;
 
-    	la_diff = pos[0] - sun_pos.latitude;
-	    long_diff = pos[1] - sun_pos.longitude;
+    	la_diff = pos[0] - sun_pos[0];
+	    long_diff = pos[1] - sun_pos[1];
 
     	model.xRotation = 10000/90*la_diff/180;
 	    model.yRotation = 10000/90*long_diff/360;
     }
-
-    // Sphere coor. to Cartesian coor.
-    // console.log("coor: ", sph2car(pos[0], pos[1], pos[2]));
-
-    // modelLayer.refresh();
-    // wwd.redraw();
 };
 
 function updateISS() {
