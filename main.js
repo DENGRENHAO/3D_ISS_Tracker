@@ -85,8 +85,9 @@ axios.get("https://live.ariss.org/iss.txt")
     })
     .then(() => {
         updateISS();
-        setInterval(updateISS, 1000);
         focusISS();
+        setInterval(updateISS, 1000);
+        setInterval(updateInfo, 1000);
     });
 
 function toDateTime(secs) {

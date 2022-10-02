@@ -5,7 +5,7 @@ function timeline_init() {
 function update_time() {
     // draw_ISS(get_render_time());
     updateISS();
-    var ori_time = wwd.goToAnimator.travelTime;
+    const ori_time = wwd.goToAnimator.travelTime;
     wwd.goToAnimator.travelTime = 0;
     focusISS();
     wwd.goToAnimator.travelTime = ori_time;

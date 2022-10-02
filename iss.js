@@ -50,10 +50,10 @@ function get_iss_pos(satrec, time) {
 function get_calotta(isspos) {
     const re = 6371.0;
     const R = isspos[2] / 1000 + re;
-    const perimeter = re * 1000 * 2 * Math.PI;
+    // const perimeter = re * 2000 * Math.PI;
     const fake_la = Math.acos(re / R);
 
-    return perimeter * fake_la / (Math.PI * 2);
+    return re * 1000 * fake_la; // perimeter * fake_la / (Math.Pi * 2)
 }
 
 function get_route(time) {
@@ -105,8 +105,7 @@ function draw_calotta(isspos) {
 
 // calculate ISS position every second
 var la_diff = 0, long_diff = 0;
-function draw_ISS(time) {
-    var pos = get_iss_pos(satrec, time);
+function draw_ISS(pos) {
     cur_iss_position = pos;
     colladaLoader.position['latitude'] = pos[0];
     colladaLoader.position['longitude'] = pos[1];
@@ -133,9 +132,16 @@ function draw_ISS(time) {
 
 function updateISS() {
     var time = get_render_time();
-    draw_ISS(time);
+    var pos = get_iss_pos(satrec, time);
+    draw_ISS(pos);
     draw_route(time);
-    // info
+    draw_calotta(pos);
+    // redraw
+    modelLayer.refresh();
+    wwd.redraw();
+}
+
+function updateInfo() {
     var pos = get_iss_pos(satrec, time);
     var velocity = Math.sqrt(pos[3]['x'] * pos[3]['x'] + pos[3]['y'] * pos[3]['y'] + pos[3]['z'] * pos[3]['z']);
     var lo = roundDecimal(pos[1], 4);
@@ -149,8 +155,4 @@ function updateISS() {
         Closest Debris Distance: ${Math.round(getClosestDistance())}km
         `
     text.text = info;
-    draw_calotta(pos);
-    // redraw
-    modelLayer.refresh();
-    wwd.redraw();
 }
