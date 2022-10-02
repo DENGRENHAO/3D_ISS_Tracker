@@ -18,13 +18,19 @@
     <body>
         <div style="position: absolute;">
             <div id="timeline">
-                <input type="range" id="time-input" min="-180" max="180" oninput="update_time();">
+                <input type="range" id="time-input" min="-720" max="720" oninput="update_time();">
+                <!-- <small>-12hr / +12hr</small> -->
                 <button onclick="to_default_time();">Set to current time</button>
             </div>
             <!-- Create a canvas for Web WorldWind. -->
             <canvas id="canvas">
                 Your browser does not support HTML5 Canvas.
             </canvas>
+            <small id="m12hr">-12hr</small>
+            <small id="p12hr">+12hr</small>
+            <div id="date-selection">
+                <input type="date" id="date-input" oninput="updateISS(); focusISS();">
+            </div>
         </div>
         <div id="toggle-debris">
             <button id="debrisToggle" onclick="toggleDebris();">Toggle Debris</button>
