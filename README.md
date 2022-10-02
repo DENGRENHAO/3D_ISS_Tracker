@@ -8,6 +8,9 @@
 
 
 ## Feature
-
-
-## 
+1. Show ground stations on the Earth.
+2. Show the visible range of the ISS.
+3. Visualize the track of the ISS.
+4. Time-travel to any moment and see the calculated position.
+5. Rotate the ISS according to the position of the Sun.
+6. Visualize the debris in the space, and mark the closet one to the ISS.
