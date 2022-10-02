@@ -1,5 +1,5 @@
 // ISS 3D model
-var config = {dirPath: '/3D-model/'};
+var config = {dirPath: '/Nasa_Space_App/3D-model/'};
 var cur_iss_position = [0, 0, 0];
 var colladaLoader = new WorldWind.ColladaLoader(
     new WorldWind.Position(cur_iss_position[0], cur_iss_position[1], cur_iss_position[2] * 1000),
