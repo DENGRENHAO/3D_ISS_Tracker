@@ -23,6 +23,18 @@ function eventWindowLoaded() {
     text = new WorldWind.ScreenText(offset, "Loading...");
     text.attributes.offset = new WorldWind.Offset(WorldWind.OFFSET_FRACTION, 0, WorldWind.OFFSET_FRACTION, 0);
     textLayer.addRenderable(text);
+    var gtextLayer = new WorldWind.RenderableLayer("Ground Stations");
+    axios.get("data/groundstations.json")
+        .then(function(res) {
+        var gtext;
+        var stations = res.data;
+        for (var i = 0; i < stations.length; i++) {
+            var station = stations[i];
+            var station_pos = new WorldWind.Position(station["LATITUDE"], station["LONGITUDE"], station["ALTITUDE"]);
+            gtext = new WorldWind.GeographicText(station_pos, station["NAME"]);
+            gtextLayer.addRenderable(gtext);
+        }
+    });
     
     var layers = [
         // Imagery layers.
@@ -37,6 +49,7 @@ function eventWindowLoaded() {
         {layer: atmosphereLayer, enabled: true},
         // WorldWindow UI layers.
         {layer: textLayer, enabled: true},
+        {layer: gtextLayer, enabled: true},
         {layer: new WorldWind.CompassLayer(), enabled: true},
         {layer: new WorldWind.CoordinatesDisplayLayer(wwd), enabled: true},
         {layer: new WorldWind.ViewControlsLayer(wwd), enabled: true}
