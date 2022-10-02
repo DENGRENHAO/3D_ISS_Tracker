@@ -44,6 +44,9 @@ var prevMinIdx = -1;
 var closestDistance = 0;
 
 function updateDebris(){
+    if (!debrisLayer.enabled)
+        return;
+    
     var time = get_render_time();
     var minDistance = Number.MAX_VALUE;
     var minIdx;
@@ -60,7 +63,7 @@ function updateDebris(){
             }
         }
         catch(err) {
-            // console.log(err, i);
+            continue;
         }
     }
     if(prevMinIdx != -1){
@@ -77,8 +80,8 @@ function updateDebris(){
     }
     allDebris[minIdx]["attributes"] = dangerDebrisAttributes;
     prevMinIdx = minIdx;
-    modelLayer.refresh();
-    wwd.redraw();
+    // modelLayer.refresh();
+    // wwd.redraw();
     closestDistance = minDistance;
 }
 
@@ -91,11 +94,11 @@ function toggleDebris(){
 function getDistance(pos1, pos2){
     var carPos1 = sph2car(pos1['latitude'], pos1['longitude'], pos1['altitude'] / 1000);
     var carPos2 = sph2car(pos2['latitude'], pos2['longitude'], pos2['altitude'] / 1000);
-    var distance = Math.sqrt(Math.pow((carPos1['x']-carPos2['x']), 2) + Math.pow((carPos1['y']-carPos2['y']), 2) + Math.pow((carPos1['z']-carPos2['z']), 2));
+    var distance = Math.pow((carPos1['x']-carPos2['x']), 2) + Math.pow((carPos1['y']-carPos2['y']), 2) + Math.pow((carPos1['z']-carPos2['z']), 2);
     return distance;
 }
 
 
 function getClosestDistance(){
-    return closestDistance;
+    return Math.sqrt(closestDistance);
 }

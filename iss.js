@@ -81,8 +81,8 @@ function draw_route(time) {
     var issRoute = new WorldWind.Path(get_route(time), issRouteAttributes);
     issRoute.extrude = true;
     modelLayer.addRenderable(issRoute);
-    modelLayer.refresh();
-    wwd.redraw();
+    // modelLayer.refresh();
+    // wwd.redraw();
 
     prevIssRoute = issRoute;
 }
@@ -97,8 +97,8 @@ function draw_calotta(isspos) {
     
     var curCalotta = new WorldWind.SurfaceCircle(new WorldWind.Location(isspos[0], isspos[1]), get_calotta(isspos), attributes);
     modelLayer.addRenderable(curCalotta);
-    modelLayer.refresh();
-    wwd.redraw();
+    // modelLayer.refresh();
+    // wwd.redraw();
 
     prevCalotta = curCalotta;
 }
@@ -127,8 +127,8 @@ function draw_ISS(time) {
     // Sphere coor. to Cartesian coor.
     // console.log("coor: ", sph2car(pos[0], pos[1], pos[2]));
 
-    modelLayer.refresh();
-    wwd.redraw();
+    // modelLayer.refresh();
+    // wwd.redraw();
 };
 
 function updateISS() {
