@@ -28,7 +28,7 @@ function drawDebris(time){
 var time = get_render_time();
 var debrisLayer = new WorldWind.RenderableLayer("Debris Layer");
 wwd.addLayer(debrisLayer);
-// debrisLayer.enabled = false;
+debrisLayer.enabled = false;
 setTimeout(drawDebris(), 1000);
 
 
