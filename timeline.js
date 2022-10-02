@@ -12,8 +12,8 @@ function update_time() {
 }
 
 function get_user_time() {
-    var input = document.getElementById("time-input");
-    return parseInt(input.value) * 60;
+    var input_time = document.getElementById("time-input");
+    return parseInt(input_time.value) * 60;
 }
 
 function to_default_time() {

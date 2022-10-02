@@ -47,6 +47,15 @@ function get_iss_pos(satrec, time) {
     return [latitude * a, longitude * a, height * 1000, velocityEci];
 }
 
+function get_calotta(isspos) {
+    const re = 6371.0;
+    const R = isspos[2] / 1000 + re;
+    const perimeter = re * 1000 * 2 * Math.PI;
+    const fake_la = Math.acos(re / R);
+
+    return perimeter * fake_la / (Math.PI * 2);
+}
+
 function get_route(time) {
     var positions = [];
     var t = time - issRouteSec/2;
@@ -62,6 +71,7 @@ var issRouteAttributes = new WorldWind.ShapeAttributes();
 issRouteAttributes.outlineColor = new WorldWind.Color(0, 1, 0, 1);
 issRouteAttributes.interiorColor = new WorldWind.Color(0, 0, 1, 0);
 var prevIssRoute;
+var prevCalotta;
 
 function draw_route(time) {
     if (prevIssRoute) {
@@ -75,6 +85,22 @@ function draw_route(time) {
     wwd.redraw();
 
     prevIssRoute = issRoute;
+}
+
+function draw_calotta(isspos) {
+    var attributes = new WorldWind.ShapeAttributes(null);
+        attributes.outlineColor = WorldWind.Color.YELLOW;
+        attributes.interiorColor = new WorldWind.Color(0, 1, 1, 0.2);
+    if (prevCalotta) {
+        modelLayer.removeRenderable(prevCalotta);
+    }
+    
+    var curCalotta = new WorldWind.SurfaceCircle(new WorldWind.Location(isspos[0], isspos[1]), get_calotta(isspos), attributes);
+    modelLayer.addRenderable(curCalotta);
+    modelLayer.refresh();
+    wwd.redraw();
+
+    prevCalotta = curCalotta;
 }
 
 // calculate ISS position every second
@@ -108,7 +134,7 @@ function draw_ISS(time) {
 function updateISS() {
     var time = get_render_time();
     draw_ISS(time);
-    draw_route(get_render_time());
+    draw_route(time);
     // info
     var pos = get_iss_pos(satrec, time);
     var velocity = Math.sqrt(pos[3]['x'] * pos[3]['x'] + pos[3]['y'] * pos[3]['y'] + pos[3]['z'] * pos[3]['z']);
@@ -119,9 +145,10 @@ function updateISS() {
         Latitude: ${Math.abs(la)}${la > 0 ? "°N" : "°S"}
         Altitude: ${roundDecimal(pos[2] / 1000, 4)}km
         Velocity: ${roundDecimal(velocity, 4)}km/s
-        Time: ${toDateTime(get_render_time()).toISOString().substring(0, 19).replace('T', ' ')}
+        Time (UTC): ${toDateTime(get_render_time()).toISOString().substring(0, 19).replace('T', ' ')}
         `
     text.text = info;
+    draw_calotta(pos);
     // redraw
     modelLayer.refresh();
     wwd.redraw();

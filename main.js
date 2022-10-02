@@ -8,6 +8,7 @@ var modelLayer = new WorldWind.RenderableLayer();
 
 // Define the event listener to initialize Web WorldWind.
 var text;
+var defaultDate;
 function eventWindowLoaded() {
     timeline_init();
 
@@ -23,6 +24,18 @@ function eventWindowLoaded() {
     text = new WorldWind.ScreenText(offset, "Loading...");
     text.attributes.offset = new WorldWind.Offset(WorldWind.OFFSET_FRACTION, 0, WorldWind.OFFSET_FRACTION, 0);
     textLayer.addRenderable(text);
+    var gtextLayer = new WorldWind.RenderableLayer("Ground Stations");
+    axios.get("data/groundstations.json")
+        .then(function(res) {
+        var gtext;
+        var stations = res.data;
+        for (var i = 0; i < stations.length; i++) {
+            var station = stations[i];
+            var station_pos = new WorldWind.Position(station["LATITUDE"], station["LONGITUDE"], station["ALTITUDE"]);
+            gtext = new WorldWind.GeographicText(station_pos, station["NAME"]);
+            gtextLayer.addRenderable(gtext);
+        }
+    });
     
     var layers = [
         // Imagery layers.
@@ -37,6 +50,7 @@ function eventWindowLoaded() {
         {layer: atmosphereLayer, enabled: true},
         // WorldWindow UI layers.
         {layer: textLayer, enabled: true},
+        {layer: gtextLayer, enabled: true},
         {layer: new WorldWind.CompassLayer(), enabled: true},
         {layer: new WorldWind.CoordinatesDisplayLayer(wwd), enabled: true},
         {layer: new WorldWind.ViewControlsLayer(wwd), enabled: true}
@@ -48,6 +62,12 @@ function eventWindowLoaded() {
     }
 
     wwd.addLayer(modelLayer);
+
+    // set default date (today)
+    var now_date = new Date();
+    defaultDate = now_date.toISOString().split('T')[0];
+    document.getElementById("date-input").defaultValue = defaultDate;
+    // console.log(document.getElementById("date-input").value);
 }
 
 var satrec;
@@ -72,8 +92,16 @@ function toDateTime(secs) {
     return new Date(secs * 1000); // Epoch
 }
 
+function get_current_date() {
+    var input_date = document.getElementById("date-input");
+    var parsed = Date.parse(input_date.value);
+    var parsed_defaultDate = Date.parse(defaultDate);
+    // console.log(parsed, parsed_defaultDate, parsed - parsed_defaultDate);
+    return parsed - parsed_defaultDate;
+}
+
 function get_current_time() {
-    return Math.round(Date.now() / 1000)
+    return Math.round((get_current_date() + Date.now()) / 1000);
 }
 
 function get_render_time() {

@@ -1,3 +1,4 @@
+// Convert spherical coordinates to Cartesian coordinates
 function sph2car(la, long, hei) {
     r = hei + 6371;
     phi = (90 - la) / 360 * (2*Math.PI);
