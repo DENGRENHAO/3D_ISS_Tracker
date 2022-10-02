@@ -70,21 +70,46 @@ function get_route(time) {
 var issRouteAttributes = new WorldWind.ShapeAttributes();
 issRouteAttributes.outlineColor = new WorldWind.Color(0, 1, 0, 1);
 issRouteAttributes.interiorColor = new WorldWind.Color(0, 0, 1, 0);
+var headRouteTextAttributs = new WorldWind.TextAttributes();
+headRouteTextAttributs.color = new WorldWind.Color(1, 1, 1, 1);
+headRouteTextAttributs.font.size = 36;
+headRouteTextAttributs.enableOutline = true;
+var tailRouteTextAttributs = new WorldWind.TextAttributes();
+tailRouteTextAttributs.color = WorldWind.Color.YELLOW;
+tailRouteTextAttributs.font.size = 36;
+tailRouteTextAttributs.enableOutline = true;
 var prevIssRoute;
 var prevCalotta;
+var prevHeadRouteText, prevTailRouteText;
 
 function draw_route(time) {
     if (prevIssRoute) {
         modelLayer.removeRenderable(prevIssRoute);
     }
-    
-    var issRoute = new WorldWind.Path(get_route(time), issRouteAttributes);
+    if(prevHeadRouteText){
+        modelLayer.removeRenderable(prevHeadRouteText);
+    }
+    if(prevTailRouteText){
+        modelLayer.removeRenderable(prevTailRouteText);
+    }
+    var positions = get_route(time);
+    var issRoute = new WorldWind.Path(positions, issRouteAttributes);
     issRoute.extrude = true;
     modelLayer.addRenderable(issRoute);
+    var headRouteText = new WorldWind.GeographicText(positions[positions.length-1], "+1.5hr");
+    headRouteText.attributes = headRouteTextAttributs;
+    headRouteText.alwaysOnTop = true;
+    modelLayer.addRenderable(headRouteText);
+    var tailRouteText = new WorldWind.GeographicText(positions[0], "-1.5hr");
+    tailRouteText.attributes = tailRouteTextAttributs;
+    tailRouteText.alwaysOnTop = true;
+    modelLayer.addRenderable(tailRouteText);
     // modelLayer.refresh();
     // wwd.redraw();
 
     prevIssRoute = issRoute;
+    prevHeadRouteText = headRouteText;
+    prevTailRouteText = tailRouteText;
 }
 
 function draw_calotta(isspos) {
