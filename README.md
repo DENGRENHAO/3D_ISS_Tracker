@@ -1,11 +1,11 @@
 # 3D ISS Tracker
 
 ## About
-[Web application](https://dengrenhao.github.io/Nasa_Space_App/) developed for [the challenge](https://2022.spaceappschallenge.org/challenges/2022-challenges/track-the-iss/details) of [NASA International Space Apps Challenge 2022](https://www.spaceappschallenge.org)
+[Web application](https://dengrenhao.github.io/3D_ISS_Tracker/) developed for [the challenge](https://2022.spaceappschallenge.org/challenges/2022-challenges/track-the-iss/details) of [NASA International Space Apps Challenge 2022](https://www.spaceappschallenge.org)
 
 ---
 
-## [Website](https://dengrenhao.github.io/Nasa_Space_App/)
+## [Website](https://dengrenhao.github.io/3D_ISS_Tracker/)
 **Screenshot:**
 ![image](https://user-images.githubusercontent.com/42902734/193443478-0cc72d48-802c-4e25-9c54-de51a01e2cf6.png)
 
