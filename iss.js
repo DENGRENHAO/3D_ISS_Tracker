@@ -142,6 +142,7 @@ function updateISS() {
 }
 
 function updateInfo() {
+    var time = get_render_time();
     var pos = get_iss_pos(satrec, time);
     var velocity = Math.sqrt(pos[3]['x'] * pos[3]['x'] + pos[3]['y'] * pos[3]['y'] + pos[3]['z'] * pos[3]['z']);
     var lo = roundDecimal(pos[1], 4);
