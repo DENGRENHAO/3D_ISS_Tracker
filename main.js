@@ -9,6 +9,7 @@ var modelLayer = new WorldWind.RenderableLayer();
 // Define the event listener to initialize Web WorldWind.
 var text;
 var defaultDate;
+var gtextLayer;
 function eventWindowLoaded() {
     timeline_init();
 
@@ -24,7 +25,7 @@ function eventWindowLoaded() {
     text = new WorldWind.ScreenText(offset, "Loading...");
     text.attributes.offset = new WorldWind.Offset(WorldWind.OFFSET_FRACTION, 0, WorldWind.OFFSET_FRACTION, 0);
     textLayer.addRenderable(text);
-    var gtextLayer = new WorldWind.RenderableLayer("Ground Stations");
+    gtextLayer = new WorldWind.RenderableLayer("Ground Stations");
     axios.get("data/groundstations.json")
         .then(function(res) {
         var gtext;

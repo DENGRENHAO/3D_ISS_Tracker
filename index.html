@@ -32,14 +32,20 @@
                 <input type="date" id="date-input" oninput="updateISS(); focusISS();">
             </div>
         </div>
-        <div id="toggle-debris">
-            <button id="debrisToggle" onclick="toggleDebris();">Toggle Debris</button>
+        <div id="toggler">
+            <div id="toggle-debris">
+                <button id="debrisToggle" onclick="toggleDebris();">Toggle Debris</button>
+            </div>
+            <div id="toggle-stations">
+                <button id="stationsToggle" onclick="toggleStations();">Toggle Ground Stations</button>
+            </div>
         </div>
         <script src="timeline.js"></script>
         <script src="iss.js"></script>
         <script src="main.js"></script>
         <script src="debris.js"></script>
         <script src="sph2car.js"></script>
+        <script src="groundstation.js"></script>
     </body>
 </html>
 
