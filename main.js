@@ -49,10 +49,12 @@ function eventWindowLoaded() {
     }
 
     wwd.addLayer(modelLayer);
+
+    // set default date (today)
     var now_date = new Date();
     defaultDate = now_date.toISOString().split('T')[0];
     document.getElementById("date-input").defaultValue = defaultDate;
-    console.log(document.getElementById("date-input").value);
+    // console.log(document.getElementById("date-input").value);
 }
 
 var satrec;

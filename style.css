@@ -42,3 +42,8 @@ button:hover {
     bottom: 0;
     right: 0;   
 }
+#date-selection {
+    position: absolute;
+    top: 45px;
+    left: 16px;
+}
