@@ -5,6 +5,8 @@ window.addEventListener("dblclick", focusISS);
 // Create a WorldWindow for the canvas.
 var wwd = new WorldWind.WorldWindow("canvas");
 var modelLayer = new WorldWind.RenderableLayer();
+var starFieldLayer = new WorldWind.StarFieldLayer();
+var atmosphereLayer = new WorldWind.AtmosphereLayer();
 
 // Define the event listener to initialize Web WorldWind.
 var text;
@@ -13,8 +15,6 @@ var gtextLayer;
 function eventWindowLoaded() {
     timeline_init();
 
-    var starFieldLayer = new WorldWind.StarFieldLayer();
-    var atmosphereLayer = new WorldWind.AtmosphereLayer();
     var now = new Date();
     starFieldLayer.time = now;
     atmosphereLayer.time = now;

@@ -2,8 +2,15 @@ function timeline_init() {
     document.getElementById("time-input").value = 0;
 }
 
+function update_world_time() {
+    const time = toDateTime(get_render_time());
+    starFieldLayer.time = time;
+    atmosphereLayer.time = time;
+}
+
 function update_time() {
     // draw_ISS(get_render_time());
+    update_world_time();
     updateISS();
     const ori_time = wwd.goToAnimator.travelTime;
     wwd.goToAnimator.travelTime = 0;
