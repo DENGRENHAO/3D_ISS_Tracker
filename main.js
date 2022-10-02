@@ -5,6 +5,7 @@ window.addEventListener("dblclick", focusISS);
 // Create a WorldWindow for the canvas.
 var wwd = new WorldWind.WorldWindow("canvas");
 var modelLayer = new WorldWind.RenderableLayer();
+var routeLayer = new WorldWind.RenderableLayer();
 var starFieldLayer = new WorldWind.StarFieldLayer();
 var atmosphereLayer = new WorldWind.AtmosphereLayer();
 
@@ -63,6 +64,7 @@ function eventWindowLoaded() {
     }
 
     wwd.addLayer(modelLayer);
+    wwd.addLayer(routeLayer);
 
     // set default date (today)
     var now_date = new Date();

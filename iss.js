@@ -59,7 +59,7 @@ function get_calotta(isspos) {
 function get_route(time) {
     var positions = [];
     var t = time - issRouteSec/2;
-    for (var i = 0; i < issRouteSec; i+=360) {
+    for (var i = 0; i <= issRouteSec; i+=360) {
         var pos = get_iss_pos(satrec, t + i);
         positions.push(new WorldWind.Position(pos[0], pos[1], pos[2]));
     }
@@ -67,51 +67,48 @@ function get_route(time) {
     return positions;
 }
 
-var issRouteAttributes = new WorldWind.ShapeAttributes();
-issRouteAttributes.outlineColor = new WorldWind.Color(0, 1, 0, 1);
-issRouteAttributes.interiorColor = new WorldWind.Color(0, 0, 1, 0);
+var issRouteAttributes_pre = new WorldWind.ShapeAttributes();
+    issRouteAttributes_pre.outlineColor = WorldWind.Color.YELLOW;
+    issRouteAttributes_pre.interiorColor = new WorldWind.Color(0, 0, 0, 0);
+    issRouteAttributes_pre.outlineWidth = 3;
+
+var issRouteAttributes_pos = new WorldWind.ShapeAttributes();
+    issRouteAttributes_pos.outlineColor = new WorldWind.Color(1, 1, 1, 1);
+    issRouteAttributes_pos.interiorColor = new WorldWind.Color(0, 0, 0, 0);
+    issRouteAttributes_pos.outlineWidth = 3;
+
 var headRouteTextAttributs = new WorldWind.TextAttributes();
-headRouteTextAttributs.color = new WorldWind.Color(1, 1, 1, 1);
-headRouteTextAttributs.font.size = 36;
-headRouteTextAttributs.enableOutline = true;
+    headRouteTextAttributs.color = new WorldWind.Color(1, 1, 1, 1);
+    headRouteTextAttributs.font.size = 36;
+    headRouteTextAttributs.enableOutline = true;
 var tailRouteTextAttributs = new WorldWind.TextAttributes();
-tailRouteTextAttributs.color = WorldWind.Color.YELLOW;
-tailRouteTextAttributs.font.size = 36;
-tailRouteTextAttributs.enableOutline = true;
-var prevIssRoute;
-var prevCalotta;
-var prevHeadRouteText, prevTailRouteText;
+    tailRouteTextAttributs.color = WorldWind.Color.YELLOW;
+    tailRouteTextAttributs.font.size = 36;
+    tailRouteTextAttributs.enableOutline = true;
 
 function draw_route(time) {
-    if (prevIssRoute) {
-        modelLayer.removeRenderable(prevIssRoute);
-    }
-    if(prevHeadRouteText){
-        modelLayer.removeRenderable(prevHeadRouteText);
-    }
-    if(prevTailRouteText){
-        modelLayer.removeRenderable(prevTailRouteText);
-    }
+    routeLayer.removeAllRenderables();
+    
     var positions = get_route(time);
-    var issRoute = new WorldWind.Path(positions, issRouteAttributes);
-    issRoute.extrude = true;
-    modelLayer.addRenderable(issRoute);
+    var mid = Math.floor(positions.length / 2);
+    var issRoute_pre = new WorldWind.Path(positions.slice(0, mid + 1), issRouteAttributes_pre);
+    var issRoute_pos = new WorldWind.Path(positions.slice(mid, positions.length), issRouteAttributes_pos);
+    routeLayer.addRenderable(issRoute_pre);
+    routeLayer.addRenderable(issRoute_pos);
+
     var headRouteText = new WorldWind.GeographicText(positions[positions.length-1], "+1.5hr");
     headRouteText.attributes = headRouteTextAttributs;
     headRouteText.alwaysOnTop = true;
-    modelLayer.addRenderable(headRouteText);
+    routeLayer.addRenderable(headRouteText);
     var tailRouteText = new WorldWind.GeographicText(positions[0], "-1.5hr");
     tailRouteText.attributes = tailRouteTextAttributs;
     tailRouteText.alwaysOnTop = true;
-    modelLayer.addRenderable(tailRouteText);
-    // modelLayer.refresh();
-    // wwd.redraw();
+    routeLayer.addRenderable(tailRouteText);
 
-    prevIssRoute = issRoute;
-    prevHeadRouteText = headRouteText;
-    prevTailRouteText = tailRouteText;
+    routeLayer.refresh();
 }
 
+var prevCalotta;
 function draw_calotta(isspos) {
     var attributes = new WorldWind.ShapeAttributes(null);
         attributes.outlineColor = WorldWind.Color.YELLOW;
