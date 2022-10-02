@@ -17,7 +17,7 @@ colladaLoader.load("textured.dae", function (colladaModel) {
 let roundDecimal = function (val, precision) {
           return Math.round(Math.round(val * Math.pow(10, (precision || 0) + 1)) / 10) / Math.pow(10, (precision || 0));
 }
-const issRouteSec = 6000;
+const issRouteSec = 10800;
 
 function focusISS() {
     wwd.goToAnimator.animationFrequency = 10;
@@ -59,7 +59,7 @@ function get_calotta(isspos) {
 function get_route(time) {
     var positions = [];
     var t = time - issRouteSec/2;
-    for (var i = 0; i < issRouteSec; i+=250) {
+    for (var i = 0; i < issRouteSec; i+=360) {
         var pos = get_iss_pos(satrec, t + i);
         positions.push(new WorldWind.Position(pos[0], pos[1], pos[2]));
     }
