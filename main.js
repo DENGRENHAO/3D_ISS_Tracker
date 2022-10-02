@@ -9,6 +9,7 @@ var modelLayer = new WorldWind.RenderableLayer();
 // Define the event listener to initialize Web WorldWind.
 var text;
 var defaultDate;
+var gtextLayer;
 function eventWindowLoaded() {
     timeline_init();
 
@@ -24,7 +25,7 @@ function eventWindowLoaded() {
     text = new WorldWind.ScreenText(offset, "Loading...");
     text.attributes.offset = new WorldWind.Offset(WorldWind.OFFSET_FRACTION, 0, WorldWind.OFFSET_FRACTION, 0);
     textLayer.addRenderable(text);
-    var gtextLayer = new WorldWind.RenderableLayer("Ground Stations");
+    gtextLayer = new WorldWind.RenderableLayer("Ground Stations");
     axios.get("data/groundstations.json")
         .then(function(res) {
         var gtext;
@@ -94,13 +95,21 @@ function toDateTime(secs) {
 
 function get_current_date() {
     var input_date = document.getElementById("date-input");
-    var parsed = Date.parse(input_date.value);
-    var parsed_defaultDate = Date.parse(defaultDate);
-    // console.log(parsed, parsed_defaultDate, parsed - parsed_defaultDate);
-    return parsed - parsed_defaultDate;
+    console.log("input date", input_date.value);
+    if (!input_date.value) {
+        console.log("Empty input date!!");
+        return 0;
+    }
+    else {
+        var parsed = Date.parse(input_date.value);
+        var parsed_defaultDate = Date.parse(defaultDate);
+        // console.log(parsed, parsed_defaultDate, parsed - parsed_defaultDate);
+        return parsed - parsed_defaultDate;
+    }
 }
 
 function get_current_time() {
+    // console.log("current date dev", get_current_date());
     return Math.round((get_current_date() + Date.now()) / 1000);
 }
 
