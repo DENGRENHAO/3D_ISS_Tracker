@@ -75,7 +75,8 @@ function eventWindowLoaded() {
 
 var satrec;
 // fetch ISS data
-axios.get("https://live.ariss.org/iss.txt")
+//axios.get("https://live.ariss.org/iss.txt")
+axios.get("https://iss.siriuskoan.one:8080")
     .then((res) => {
     //console.log(res.data);
     lines = res.data.split(/\r?\n/);
